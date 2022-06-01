@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Positions";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @Html.ActionLink("Dashboard", "Index", "Home")
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').jtable({
+            title: 'Positions',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Name: {
+                    title: 'Name',
+                    width: '2%'
+                },
+                //End of Contact Child Table
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+    });
+</script>

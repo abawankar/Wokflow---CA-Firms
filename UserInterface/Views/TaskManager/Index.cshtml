@@ -1,0 +1,289 @@
+﻿
+@{
+    ViewBag.Title = "Task List";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a id="refresh" title="Refresh page" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        @Html.DropDownList("tasktype", new SelectList((ViewBag.tasktype) as SelectList, "Value", "Text"), "Task Types", new { @class = "search-box" })
+        @Html.DropDownList("consultant", new SelectList((ViewBag.consultant) as SelectList, "Value", "Text"), "All Consultant", new { @class = "search-box" })
+        @Html.DropDownList("client", new SelectList((ViewBag.client) as SelectList, "Value", "Text"), "All Clients", new { @class = "search-box" })
+        <input type="text" class="search-box" id="name" placeholder="Search.." />
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table').jtable({
+            title: 'Assigned Task List',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Date: {
+                    title: 'Date',
+                    width: '2%',
+                    type: 'date',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Date != null)
+                            return moment(data.record.Date).format('DD/MMM/YYYY')
+                    },
+                },
+                Assigner: {
+                    title: 'Assigner',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Assigneer != null)
+                            return data.record.Assigneer.Name;
+                    }
+                },
+                Clients: {
+                    title: 'Client',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.Client.Name;
+                    }
+                },
+                FileNumber: {
+                    title: 'TaskNumber',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.FileNumber;
+                    }
+                },
+                ConsltId: {
+                    title: 'Consultant',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Consultant != null)
+                            return data.record.Consultant.Name;
+                    }
+                },
+                Task: {
+                    title: 'Task',
+                    width: '2%',
+                    edit: false,
+                },
+                Notes: {
+                    title: 'Notes',
+                    width: '2%',
+                    type: 'textarea'
+                },
+                Assignee: {
+                    title: 'Assignee',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        var emp = "";
+                        if (data.record.Contacts != null) {
+                            $.each(data.record.Contacts, function (data, record) {
+                                if (emp == "") {
+                                    emp = record.Name;
+                                }
+                                else {
+                                    emp = emp + "," + record.Name;
+                                }
+
+                            });
+                        }
+                        return emp;
+                    }
+                },
+                Start: {
+                    title: 'Start',
+                    width: '2%',
+                    type: 'date',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Start != null)
+                            return moment(data.record.Start).format('DD/MMM/YYYY')
+                    },
+                },
+                Due: {
+                    title: 'Due',
+                    width: '2%',
+                    type: 'date',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Due != null)
+                            return moment(data.record.Due).format('DD/MMM/YYYY')
+                    },
+                },
+                Compl: {
+                    title: 'Compl',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Compl != null)
+                            return moment(data.record.Compl).format('DD/MMM/YYYY')
+                    },
+                },
+                StatusPercentage: {
+                    title: 'Status%',
+                    width: '0.1%',
+                    options: { '0': '0 %', '25': '25 %', '50': '50 %', '75': '75 %', '100': '100 %' },
+                    display: function (data) {
+                        return data.record.StatusPercentage + ' %';
+                    },
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Start', '2': 'Cancelled', '3': 'Completed' },
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='blue'>" + "Start" + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='red'>" + 'Cancelled' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='green'>" + 'Completed' + "</div>";
+                    }
+                },
+                //Child table for Factory Contacts
+                Comments: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (cmt) {
+                        var $img = $('<img title="Comments" class="child-opener-image" src="Content/Images/comnt.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: cmt.record.FileNumber.FileNumber + " -Comments",
+                                actions: {
+                                    listAction: '@Url.Action("CommentsList")?taskid=' + cmt.record.Id,
+                                    updateAction: '@Url.Action("UpdateComments")',
+                                    createAction: '@Url.Action("AddComments")?taskid=' + cmt.record.Id
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Date: {
+                                        title: 'Date',
+                                        width: '0.1%',
+                                        type: 'date',
+                                        edit: false,
+                                        create: false,
+                                        display: function (data) {
+                                            if (data.record.Date != null)
+                                                return moment(data.record.Date).format('DD/MMM/YYYY')
+                                        },
+                                    },
+                                    Comments: {
+                                        title: 'Comments',
+                                        width: '10%',
+                                        type: 'textarea'
+                                    },
+                                    UserName: {
+                                        title: 'UserName',
+                                        width: '0.5%',
+                                        edit: false,
+                                        create: false,
+                                    },
+
+                                },
+                                formCreated: function (event, data) {
+                                    data.form.find('textarea[name="Comments"]').addClass('validate[required]');
+                                    data.form.validationEngine();
+                                },
+                                formSubmitting: function (event, data) {
+                                    return data.form.validationEngine('validate');
+                                },
+                                formClosed: function (event, data) {
+                                    data.form.validationEngine('hide');
+                                    data.form.validationEngine('detach');
+                                }
+
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //End of Contact Child Table
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                $("#Edit-DOB").removeClass('hasDatepicker');
+                $("#Edit-DOB").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'yy-mm-dd' });
+
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                name: $('#name').val(), client: $('#client').val(), tasktype: $('#tasktype').val(), consultant: $('#consultant').val()
+            });
+        });
+
+        $("#refresh").click(function (e) {
+            $('#name').val('');
+            $('#client').val('');
+            $('#consultant').val('');
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val(), client: $('#client').val(), tasktype: $('#tasktype').val(), consultant: $('#consultant').val()
+                });
+            }
+        });
+    });
+</script>
+    
+

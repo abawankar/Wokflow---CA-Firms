@@ -1,0 +1,181 @@
+﻿@{
+    ViewBag.Title = "Workflow-Dashboard";
+}
+<style type="text/css">
+    .panel-sm {
+        padding: 1px 15px;
+    }
+
+    .panel-top {
+        margin-left: 40px;
+    }
+
+    .panel-bot {
+        margin-top: 5px;
+    }
+
+    .dark-col {
+        background-color: #F8F8F8;
+    }
+    .navbar{
+        margin-bottom:5px;
+    }
+</style>
+
+<script type="text/javascript">
+    function toggler(divId) {
+        $("#" + divId).toggle();
+    }
+</script>
+
+<div class="row">
+    <div class="dark-col col-sm-2 col-md-2 ">
+        @if (User.IsInRole("Admin") || User.IsInRole("User")) { 
+       <ul class="nav nav-sidebar"><li class="active"><a href="#master" class="toggle">
+       <span class="glyphicon glyphicon-plus"></span><strong> MASTER</strong></a></li></ul>
+       <div id="master" class="hidden">
+            <ul class="nav nav-sidebar">
+                @if(User.IsInRole("Admin")){
+                <li>@Html.ActionLink("Company", "Index", "Company")</li>
+                <li>@Html.ActionLink("Positions", "Index", "Positions")</li>
+                <li>@Html.ActionLink("Task Types", "Index", "TaskTypes")</li>
+                <li>@Html.ActionLink("Employee Rights", "Index", "EmpRights")</li>
+                }
+                <li>@Html.ActionLink("Employee", "Index", "Employee")</li>
+                <li>@Html.ActionLink("Clients", "Index", "Clients")</li>
+                <li>@Html.ActionLink("Consultant", "Index", "Consultant")</li>
+            </ul>
+        </div>
+
+        <ul class="nav nav-sidebar"><li class="active"><a href="#trn" class="toggle">
+        <span class="glyphicon glyphicon-plus"></span><strong> TRANSACTION</strong></a></li></ul>
+        <div id="trn">
+            <ul class="nav nav-sidebar">
+                <li>@Html.ActionLink("Task", "Index", "NBO")</li>
+                <li>@Html.ActionLink("Task Assingment", "Index", "NewTask")</li>
+                <li>@Html.ActionLink("Assigned Task List", "Index", "TaskManager")</li>
+                <li>@Html.ActionLink("Invoice Genrated", "Index", "Invoice")</li>
+            </ul>
+        </div>
+
+        <ul class="nav nav-sidebar"><li class="active"><a href="#rpt" class="toggle">
+        <span class="glyphicon glyphicon-plus"></span><strong> REPORT</strong></a></li></ul>
+        <div id="rpt" class="hidden">
+            <ul class="nav nav-sidebar">
+                <li>@Html.ActionLink("Clients Assigned To Employee", "Index", "EmployeeAssignedClient")</li>
+                <li>@Html.ActionLink("Pending Task", "Index", "PendingTask")</li>
+                <li>@Html.ActionLink("Completed Task", "Index", "Home")</li>
+            </ul>
+        </div>
+
+        <ul class="nav nav-sidebar"><li class="active"><a href="#admin" class="toggle">
+        <span class="glyphicon glyphicon-plus"></span><strong> ADMIN</strong></a></li></ul>
+        <div id="admin" class="hidden">
+            <ul class="nav nav-sidebar">
+                <li>@Html.ActionLink("Chat", "Chat", "Home")</li>
+                @if (User.IsInRole("Admin")) { 
+                <li>@Html.ActionLink("Application Users", "UserList", "Role")</li>
+                <li>@Html.ActionLink("User Login Info", "Index", "LoginInfo")</li>
+                }
+            </ul>
+        </div>
+        }
+        
+        @if (User.IsInRole("Consultant"))
+        {
+            <ul class="nav nav-sidebar">
+                <li class="active">
+                    <a href="#trn" class="toggle">
+                        <span class="glyphicon glyphicon-plus"></span><strong> TRANSACTION</strong>
+                    </a>
+                </li>
+            </ul>
+            
+            <div id="trn">
+                <ul class="nav nav-sidebar">
+                    <li>@Html.ActionLink("Assigned Task List", "Index", "ConsultantView")</li>
+                    <li>@Html.ActionLink("Chat", "Chat", "Home")</li>
+                </ul>
+            </div>
+        }
+        
+        @if (User.IsInRole("Client"))
+        {
+            <ul class="nav nav-sidebar">
+                <li class="active">
+                    <a href="#trn" class="toggle">
+                        <span class="glyphicon glyphicon-plus"></span><strong> ADMIN</strong>
+                    </a>
+                </li>
+            </ul>
+            <div id="trn">
+                <ul class="nav nav-sidebar">
+                    <li>@Html.ActionLink("Chat", "Chat", "Home")</li>
+                </ul>
+            </div>
+        }
+        @if (User.IsInRole("Accountant"))
+        {
+            <ul class="nav nav-sidebar">
+                <li class="active">
+                    <a href="#trn" class="toggle">
+                        <span class="glyphicon glyphicon-plus"></span><strong> ADMIN</strong>
+                    </a>
+                </li>
+            </ul>
+            <div id="trn">
+                <ul class="nav nav-sidebar">
+                    <li>@Html.ActionLink("Clients", "Index", "Clients")</li>
+                    <li>@Html.ActionLink("Task", "Index", "NBO")</li>
+                    <li>@Html.ActionLink("Invoice Genrated", "Index", "Invoice")</li>
+                    <li>@Html.ActionLink("Chat", "Chat", "Home")</li>
+                </ul>
+            </div>
+        }
+
+    </div>
+
+    <div class="col-sm-10">
+        <div class="panel panel-info">
+            <div class="panel-heading"><strong>DASHBOARD</strong></div>
+            @if (User.IsInRole("Admin") || User.IsInRole("User"))
+            {
+                <div class="panel-body">
+                    @{Html.RenderAction("TodayTask", "TaskManager");}
+                </div>
+            }
+            @if (User.IsInRole("Consultant"))
+            {
+                <div class="panel-body">
+                    @{Html.RenderAction("ConsultantTodayTask", "ConsultantView");}
+                </div>
+            }
+            @if (User.IsInRole("Client"))
+            {
+                <div class="panel-body">
+                    @{Html.RenderAction("Index", "ClientFile");}
+                </div>
+            }
+            @if (User.IsInRole("Accountant"))
+            {
+                <div class="panel-body">
+                    @{Html.RenderAction("Index", "AccountantView");}
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(function () {
+            $('.toggle').click(function (event) {
+                event.preventDefault();
+                var target = $(this).attr('href');
+                $(target).toggleClass('hidden show');
+            });
+        });
+    });
+</script>

@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Company";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @Html.ActionLink("Dashboard", "Index", "Home")
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').jtable({
+            title: 'Company',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Code: {
+                    title: 'Code',
+                    width: '2%'
+                },
+                Name: {
+                    title: 'Name',
+                    width: '2%'
+                },
+                PAN: {
+                    title: 'PAN',
+                    width: '2%'
+                },
+                Address: {
+                    title: 'Address',
+                    width: '2%',
+                    type:'textarea'
+                },
+                ServiceTax: {
+                    title: 'ServiceTax',
+                    width: '2%'
+                },
+                Emailid: {
+                    title: 'Emailid',
+                    width: '2%'
+                },
+                PhoneNo: {
+                    title: 'PhoneNo',
+                    width: '2%'
+                },
+                CIN: {
+                    title: 'CIN',
+                    width: '2%'
+                },
+                RegDate: {
+                    title: 'RegDate',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.RegDate != null)
+                            return moment(data.record.RegDate).format('DD/MMM/YYYY')
+                    },
+                },
+                RegNumber: {
+                    title: 'RegNumber',
+                    width: '2%'
+                },
+                WebSite: {
+                    title: 'WebSite',
+                    width: '2%'
+                },
+                
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+
+                $("#Edit-RegDate").removeClass('hasDatepicker');
+                $("#Edit-RegDate").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'yy-mm-dd' });
+
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+    });
+</script>

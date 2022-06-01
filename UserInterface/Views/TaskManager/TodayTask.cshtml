@@ -1,0 +1,268 @@
+﻿
+@{
+    ViewBag.Title = "TodayTask";
+}
+<div id="table"></div>
+<div id="pendingtable"></div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').jtable({
+            title: 'Todays Assigned Task',
+            async: false,
+            actions: {
+                listAction: '@Url.Action("TodayTaskList")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Assigner: {
+                    title: 'Assigner',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Assigneer != null)
+                            return data.record.Assigneer.Name;
+                    }
+                },
+                Clients: {
+                    title: 'Client',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.Client.Name;
+                    }
+                },
+                FileNumber: {
+                    title: 'TaskNumber',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.FileNumber;
+                    }
+                },
+                ConsltId: {
+                    title: 'Consultant',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.Consultant != null)
+                            return data.record.Consultant.Name;
+                    }
+                },
+                Assignee: {
+                    title: 'Assignee',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        var emp = "";
+                        if (data.record.Contacts != null) {
+                            $.each(data.record.Contacts, function (data, record) {
+                                if (emp == "") {
+                                    emp = record.Name;
+                                }
+                                else {
+                                    emp = emp + "," + record.Name;
+                                }
+
+                            });
+                        }
+                        return emp;
+                    }
+                },
+                Notes: {
+                    title: 'Notes',
+                    width: '2%',
+                    type: 'textarea'
+                },
+
+                Start: {
+                    title: 'Start',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Start != null)
+                            return moment(data.record.Start).format('DD/MMM/YYYY')
+                    },
+                },
+                Due: {
+                    title: 'Due',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Due != null)
+                            return moment(data.record.Due).format('DD/MMM/YYYY')
+                    },
+                },
+                Compl: {
+                    title: 'Compl',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Compl != null)
+                            return moment(data.record.Compl).format('DD/MMM/YYYY')
+                    },
+                },
+                StatusPercentage: {
+                    title: 'Status %',
+                    width: '2%',
+                    display: function (data) {
+                        return data.record.StatusPercentage + ' %';
+                    },
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Start', '2': 'Cancelled', '3': 'Completed' },
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='green'>" + "Start" + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='red'>" + 'Cancelled' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='seagreen'>" + 'Completed' + "</div>";
+                    }
+                }
+            },
+        });
+        $('#table').jtable('load');
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#pendingtable').jtable({
+            title: 'Pending / Future Assigned Task',
+            async: false,
+            actions: {
+                listAction: '@Url.Action("PendingTaskList")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Assigner: {
+                    title: 'Assigner',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Assigneer != null)
+                            return data.record.Assigneer.Name;
+                    }
+                },
+                Clients: {
+                    title: 'Client',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.Client.Name;
+                    }
+                },
+                FileNumber: {
+                    title: 'TaskNumber',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.FileNumber;
+                    }
+                },
+                ConsltId: {
+                    title: 'Consultant',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.Consultant != null)
+                            return data.record.Consultant.Name;
+                    }
+                },
+                Assignee: {
+                    title: 'Assignee',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        var emp = "";
+                        if (data.record.Contacts != null) {
+                            $.each(data.record.Contacts, function (data, record) {
+                                if (emp == "") {
+                                    emp = record.Name;
+                                }
+                                else {
+                                    emp = emp + "," + record.Name;
+                                }
+
+                            });
+                        }
+                        return emp;
+                    }
+                },
+                Notes: {
+                    title: 'Notes',
+                    width: '2%',
+                    type: 'textarea'
+                },
+
+                Start: {
+                    title: 'Start',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Start != null)
+                            return moment(data.record.Start).format('DD/MMM/YYYY')
+                    },
+                },
+                Due: {
+                    title: 'Due',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Due != null)
+                            return moment(data.record.Due).format('DD/MMM/YYYY')
+                    },
+                },
+                Compl: {
+                    title: 'Compl',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Compl != null)
+                            return moment(data.record.Compl).format('DD/MMM/YYYY')
+                    },
+                },
+                StatusPercentage: {
+                    title: 'Status %',
+                    width: '2%',
+                    display: function (data) {
+                        return data.record.StatusPercentage + ' %';
+                    },
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Start', '2': 'Cancelled', '3': 'Completed' },
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='green'>" + "Start" + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='red'>" + 'Cancelled' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='seagreen'>" + 'Completed' + "</div>";
+                    }
+                }
+            },
+        });
+        $('#pendingtable').jtable('load');
+    });
+</script>

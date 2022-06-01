@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BEEFB270-1921-4588-A8F2-E5D4D32589BB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Domain</RootNamespace>
+    <AssemblyName>Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>D:\MVC Project\Dubai Payroll\DDS4UPayroll\dll\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>D:\MVC Project\Dubai Payroll\DDS4UPayroll\dll\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>D:\MVC Project\Dubai Payroll\DDS4UPayroll\dll\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\MVC Project\Dubai Payroll\DDS4UPayroll\dll\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>D:\MVC Project\Dubai Payroll\DDS4UPayroll\dll\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Implementation\LoginInfo.cs" />
+    <Compile Include="Implementation\Master\ClientContact.cs" />
+    <Compile Include="Implementation\Master\Clients.cs" />
+    <Compile Include="Implementation\Master\Company.cs" />
+    <Compile Include="Implementation\Master\Consultant.cs" />
+    <Compile Include="Implementation\Master\Employee.cs" />
+    <Compile Include="Implementation\Master\EmpRights.cs" />
+    <Compile Include="Implementation\Master\TaskTypes.cs" />
+    <Compile Include="Implementation\Master\Positions.cs" />
+    <Compile Include="Implementation\Transaction\Invoice.cs" />
+    <Compile Include="Implementation\Transaction\InvoiceTrn.cs" />
+    <Compile Include="Implementation\Transaction\NBO.cs" />
+    <Compile Include="Implementation\Transaction\NboDocument.cs" />
+    <Compile Include="Implementation\Transaction\Receivable.cs" />
+    <Compile Include="Implementation\Transaction\TaskComments.cs" />
+    <Compile Include="Implementation\Transaction\TaskManager.cs" />
+    <Compile Include="Interface\ILoginInfo.cs" />
+    <Compile Include="Interface\Master\IClientContact.cs" />
+    <Compile Include="Interface\Master\IClients.cs" />
+    <Compile Include="Interface\Master\ICompany.cs" />
+    <Compile Include="Interface\Master\IConsultant.cs" />
+    <Compile Include="Interface\Master\IEmployee.cs" />
+    <Compile Include="Interface\Master\IEmpRights.cs" />
+    <Compile Include="Interface\Master\ITaskTypes.cs" />
+    <Compile Include="Interface\Master\IPositions.cs" />
+    <Compile Include="Interface\Transaction\IInvoice.cs" />
+    <Compile Include="Interface\Transaction\IInvoiceTrn.cs" />
+    <Compile Include="Interface\Transaction\INBO.cs" />
+    <Compile Include="Interface\Transaction\INboDocument.cs" />
+    <Compile Include="Interface\Transaction\IReceivable.cs" />
+    <Compile Include="Interface\Transaction\ITaskComments.cs" />
+    <Compile Include="Interface\Transaction\ITaskManager.cs" />
+    <Compile Include="Mapping\LoginInfoMap.cs" />
+    <Compile Include="Mapping\Master\ClientContactMap.cs" />
+    <Compile Include="Mapping\Master\ClientsMap.cs" />
+    <Compile Include="Mapping\Master\CompanyMap.cs" />
+    <Compile Include="Mapping\Master\ConsultantMap.cs" />
+    <Compile Include="Mapping\Master\EmployeeMap.cs" />
+    <Compile Include="Mapping\Master\EmpRightsMap.cs" />
+    <Compile Include="Mapping\Master\TaskTypesMap.cs" />
+    <Compile Include="Mapping\Master\PositionsMap.cs" />
+    <Compile Include="Mapping\Transaction\InvoiceMap.cs" />
+    <Compile Include="Mapping\Transaction\InvoiceTrnMap.cs" />
+    <Compile Include="Mapping\Transaction\NboDocumentMap.cs" />
+    <Compile Include="Mapping\Transaction\NBOMap.cs" />
+    <Compile Include="Mapping\Transaction\ReceivableMap.cs" />
+    <Compile Include="Mapping\Transaction\TaskCommentsMap.cs" />
+    <Compile Include="Mapping\Transaction\TaskManagerMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

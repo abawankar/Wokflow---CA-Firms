@@ -1,0 +1,420 @@
+﻿@{
+    ViewBag.Title = "Task";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        
+        <a id="refresh" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        @Html.DropDownList("tasktype", new SelectList((ViewBag.tasktype) as SelectList, "Value", "Text"), "Task Types", new { @class = "search-box" })
+        @Html.DropDownList("client", new SelectList((ViewBag.client) as SelectList, "Value", "Text"), "All Clients", new { @class = "search-box" })
+        <input type="text" class="search-box" id="name" placeholder="Search.." />
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+        <div id="dialog-edit" style="display: none"> </div>
+        <div id="dialog-finance" style="display: none"> </div>
+    </div>
+</div>
+
+<style type="text/css">
+.cursor{
+    cursor:pointer;
+}
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Dialog form
+        $("#dialog-edit").dialog({
+            title: 'Print Labels',
+            autoOpen: false,
+            resizable: false,
+            width: 350,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").show();
+                $(this).load(url);
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+        //End dialog form
+
+        //Dialog form
+        $("#dialog-finance").dialog({
+            title: '',
+            autoOpen: false,
+            resizable: false,
+            width: 615,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(this).load(url);
+                $(".ui-dialog-titlebar-close").show();
+
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+
+        $('#table').jtable({
+            title: 'Task',
+            paging: true,
+            pagesize: 3,
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                FileNumber: {
+                    title: 'TaskNo',
+                    width: '2%',
+                    create: false,
+                    edit: false,
+                },
+                TaskTypeId: {
+                    title: 'TaskTypes',
+                    width: '4%',
+                    options: '@Url.Action("GetTaskTypesOptions", "TaskTypes")',
+                },
+                ClientId: {
+                    title: 'Client',
+                    width: '4%',
+                    options: '@Url.Action("GetClientsOptions", "Clients")',
+                },
+                Received: {
+                    title: 'Received',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Received != null)
+                            return moment(data.record.Received).format('DD/MMM/YYYY')
+                    },
+                },
+                DueDate: {
+                    title: 'DueDate',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.DueDate != null)
+                            return moment(data.record.DueDate).format('DD/MMM/YYYY')
+                    },
+                },
+                Completed: {
+                    title: 'Completed',
+                    width: '2%',
+                    type: 'date',
+                    create:false,
+                    display: function (data) {
+                        if (data.record.Completed != null)
+                            return moment(data.record.Completed).format('DD/MMM/YYYY')
+                    },
+                },
+                Cost: {
+                    title: 'Cost',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.Cost != 0 || data.record.Cost != null)
+                            return '<div style="float:right;">' + addCommas(data.record.Cost.toFixed(2)) + '</div>'
+                        else
+                            return 0;
+                    }
+                },
+                BillStatus: {
+                    title: 'Billing',
+                    width: '0.1%',
+                    edit: false,
+                    create: false,
+                    options: { '1': 'Pending', '2': 'Done' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.BillStatus == 1)
+                            return "<div class='red'>" + 'Pending' + "</div>";
+                        if (data.record.BillStatus == 2)
+                            return "<div class='green'>" + 'Done' + "</div>";
+                    },
+                },
+                FilingStatus: {
+                    title: 'Filing',
+                    width: '0.1%',
+                    edit: false,
+                    create: false,
+                    options: { '1': 'Pending', '2': 'Done' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.FilingStatus == 1)
+                            return "<div class='red'>" + 'Pending' + "</div>";
+                        if (data.record.FilingStatus == 2)
+                            return "<div class='green'>" + 'Done' + "</div>";
+                    },
+                },
+                PaymentStatus: {
+                    title: 'Payment',
+                    width: '0.1%',
+                    edit: false,
+                    create: false,
+                    options: { '1': 'Pending', '2': 'Paid' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.PaymentStatus == 1)
+                            return "<div class='red'>" + 'Pending' + "</div>";
+                        if (data.record.PaymentStatus == 2)
+                            return "<div class='green'>" + 'Paid' + "</div>";
+                    },
+                },
+                OfficeFileNo: {
+                    title: 'OfficeFileNo',
+                    width: '1%',
+                    edit: false,
+                    create: false,
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Running', '2': 'Done', '3': 'Cancelled', '4': 'Closed' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='blue'>" + 'RUN' + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='green'>" + 'Done' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='red'>" + 'CAN' + "</div>";
+                        if (data.record.Status == 4)
+                            return "<div class='yellow'>" + 'Closed' + "</div>";
+                    },
+                },
+                //Add Document
+                Attachments: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (img) {
+                        var $img = $('<img title="Attachments" class="child-opener-image" src="Content/Images/attach.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: "Document: " + img.record.FileNumber,
+                                actions: {
+                                    listAction: '@Url.Action("DocumentList")?id=' + img.record.Id,
+                                    deleteAction: '@Url.Action("DeleteDocument")',
+
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Filetype: {
+                                        title: '',
+                                        width: '1%',
+                                        edit: false,
+                                        display: function (att) {
+                                            var $img = $('<img title="Documents" class="child-opener-image cursor" src="Content/Images/attach.png" width="20px" />');
+                                            $img.click(function () {
+                                                var file = att.record.FileOnServer;
+                                                var url = "Upload/Document/" + file
+                                                window.open(url);
+                                            });
+                                            return $img
+                                        }
+                                    },
+                                    FileName: {
+                                        title: 'FileName',
+                                        width: '20%',
+                                        edit: false,
+                                    },
+                                    FileSize: {
+                                        title: 'File Size',
+                                        width: '20%',
+                                        edit: false,
+                                    }
+
+                                },
+                                toolbar: {
+                                    items: [{
+                                        icon: '/Content/Images/Add.png',
+                                        text: 'Add Document',
+                                        click: function () {
+                                            var str = $('@Html.ActionLink("AddDocument", "AddDocument")').attr('href');
+                                            url = str + "/" + img.record.Id
+                                            $("#dialog-edit").dialog("option", "title", "Add Document");
+                                            $("#dialog-edit").dialog('open');
+                                            return false;
+                                        }
+                                    }]
+                                }
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //Child Table End*/
+                //Child table for Factory Contacts
+                Comments: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (cmt) {
+                        var $img = $('<img title="Comments" class="child-opener-image" src="Content/Images/comnt.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: cmt.record.FileNumber + " -Task Comments",
+                                actions: {
+                                    listAction: '@Url.Action("TaskComments")?id=' + cmt.record.Id,
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Date: {
+                                        title: 'Date',
+                                        width: '0.1%',
+                                        type: 'date',
+                                        edit: false,
+                                        create: false,
+                                        display: function (data) {
+                                            if (data.record.Date != null)
+                                                return moment(data.record.Date).format('DD/MMM/YYYY')
+                                        },
+                                    },
+                                    Comments: {
+                                        title: 'Comments',
+                                        width: '10%',
+                                        type: 'textarea'
+                                    },
+                                    UserName: {
+                                        title: 'UserName',
+                                        width: '0.5%',
+                                        edit: false,
+                                        create: false,
+                                    },
+
+                                },
+
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //End of comments Child Table
+                Finance: {
+                    title: '',
+                    width: '0.1%',
+                    edit: false,
+                    create: false,
+                    display: function (data) {
+                        var $img = $('<img title="Finance" class="child-opener-image" src="Content/Images/Finance.png" width=22 />');
+                        $img.click(function () {
+                            if (data.record.StatusId != 1) {
+                                url = $('@Html.ActionLink("Finance","Finance")').attr('href');
+                                url = url + "?id=" + data.record.Id + "&file=" + data.record.FileNumber;
+                                $("#dialog-finance").dialog("option", "title", "File Number: " + data.record.FileNumber + " Receivable Data ");
+                                $("#dialog-finance").dialog('open');
+                            }
+                            return false;
+                        });
+                        return $img;
+                    }
+                }
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                var tasktype = $("#Edit-TaskTypeId").val();
+                var client = $("#Edit-ClientId").val();
+
+                if (client == 0) {
+                    alert("Select Client");
+                    e.preventDefault();
+                    return;
+                }
+                if (tasktype == 0) {
+                    alert("Select File Types");
+                    e.preventDefault();
+                    return;
+                }
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#refresh").click(function (e) {
+            $('#client').val('');
+            $('#name').val('');
+            $('#tasktype').val('')
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val()
+                });
+            }
+        });
+
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                name: $('#name').val(), client: $('#client').val(), tasktype: $('#tasktype').val()
+            });
+        });
+    });
+</script>

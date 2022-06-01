@@ -1,0 +1,33 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Genral Site Error";
+}
+
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @Html.ActionLink("Dashboard", "Index", "Home")
+    </div>
+    <div class="panel-body">
+        <h2>
+            A Genral Error Has Occurred
+        </h2>
+        @if (Model != null)
+        {
+            <p>
+                @Model.Exception.GetType().Name<br />
+                @Model.Exception.GetType().FullName<br />
+                thrown in @Model.ControllerName @Model.ActionName
+            </p>
+
+            <p>Error Details:</p>
+            <p>@Model.Exception.Message</p>
+        }
+        
+        
+
+
+    </div>
+</div>
+

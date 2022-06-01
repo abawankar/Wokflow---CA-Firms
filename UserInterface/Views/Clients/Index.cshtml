@@ -1,0 +1,256 @@
+﻿@{
+    ViewBag.Title = "Clients";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a id="refresh" title="Refresh page" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        <input type="text" id="name" class="search-box" placeholder="Search" />
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').jtable({
+            title: 'Clients',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            useBootstrap: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Name: {
+                    title: 'Name',
+                    width: '12%'
+                },
+                MobileNo: {
+                    title: 'MobileNo',
+                    width: '12%',
+                    sorting: false,
+                },
+                EmailId: {
+                    title: 'EmailId',
+                    width: '12%',
+                    sorting: false,
+                },
+                Address: {
+                    title: 'Address',
+                    width: '12%',
+                    type: 'textarea',
+                    sorting: false,
+                    visibility: 'hidden'
+                },
+                PAN: {
+                    title: 'PAN',
+                    sorting: false,
+                    width: '12%'
+                },
+                CIN: {
+                    title: 'CIN',
+                    sorting: false,
+                    width:'12%'
+                },
+                DateOfIncorpration: {
+                    title: 'DOC',
+                    width: '12%',
+                    sorting: false,
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Date != null)
+                            return moment(data.record.Date).format('DD/MMM/YYYY')
+                    },
+                },
+                TAN: {
+                    title: 'TAN',
+                    sorting: false,
+                    width: '12%'
+                },
+                ServicetaxNumber: {
+                    title: 'ServiceTaxNo',
+                    sorting: false,
+                    width: '12%'
+                },
+                TIN: {
+                    title: 'TIN',
+                    sorting: false,
+                    width: '12%'
+                },
+                CIN: {
+                    title: 'CIN',
+                    sorting: false,
+                    width: '12%'
+                },
+                BankName: {
+                    title: 'BankName',
+                    sorting: false,
+                    width:'12%'
+                },
+                AccountNumber: {
+                    title: 'AccountNo',
+                    sorting: false,
+                    width: '12%'
+                },
+                IFSC: {
+                    title: 'IFSC',
+                    sorting: false,
+                    width: '12%'
+                },
+                AccountType:{
+                    title: 'A/cType',
+                    sorting: false,
+                    width: '12%',
+                    options: {"NA":" ","SA":"Saving","CA":"Current","OD":"OD"}
+                },
+                //Child table for Factory Contacts
+                Contact: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (contact) {
+                        var $img = $('<img title="Contacts" class="child-opener-image" src="Content/Images/phone.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: contact.record.Name + " -Contact",
+                                actions: {
+                                    listAction: '@Url.Action("ContactList")?clientid=' + contact.record.Id,
+                                    deleteAction: '@Url.Action("DeleteContact")',
+                                    updateAction: '@Url.Action("UpdateContact")',
+                                    createAction: '@Url.Action("AddContact")?clientid=' + contact.record.Id
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Name: {
+                                        title: 'Name',
+                                        width: '9%'
+                                    },
+                                    MobileNo: {
+                                        title: 'MobileNo',
+                                        width: '9%'
+                                    },
+                                    Mailid: {
+                                        title: 'Mailid',
+                                        width: '9%'
+                                    },
+                                    Comments: {
+                                        title: 'Comments',
+                                        width: '9%',
+                                        type:'textarea'
+                                    },
+                                    DIN: {
+                                        title: 'DIN',
+                                        width: '9%'
+                                    },
+                                    PAN: {
+                                        title: 'PAN',
+                                        width: '9%'
+                                    },
+                                    DOB: {
+                                        title: 'DOB',
+                                        width: '2%',
+                                        type: 'date',
+                                        display: function (data) {
+                                            if (data.record.DOB != null)
+                                                return moment(data.record.DOB).format('DD/MMM/YYYY')
+                                        },
+                                    },
+                                },
+                                formCreated: function (event, data) {
+                                    data.form.find('input[name="Name"]').addClass('validate[required]');
+                                    data.form.find('input[name="MobileNo"]').addClass('validate[required],custom[mobile]');
+                                    data.form.find('input[name="MailId"]').addClass('validate[required,custom[email]]');
+                                    data.form.validationEngine();
+                                },
+                                formSubmitting: function (event, data) {
+                                    return data.form.validationEngine('validate');
+                                },
+                                formClosed: function (event, data) {
+                                    data.form.validationEngine('hide');
+                                    data.form.validationEngine('detach');
+                                }
+
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //End of Contact Child Table
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                data.form.find('input[name="MobileNo"]').addClass('validate[required],custom[mobile]');
+                data.form.find('input[name="EmailId"]').addClass('validate[required,custom[email]]');
+
+                $("#Edit-DateOfIncorpration").removeClass('hasDatepicker');
+                $("#Edit-DateOfIncorpration").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'yy-mm-dd' });
+
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#refresh").click(function (e) {
+            $('#name').val('');
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val()
+                });
+            }
+        });
+
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                name: $('#name').val()
+            });
+        });
+    });
+</script>

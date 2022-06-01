@@ -1,0 +1,25 @@
+﻿<style type="text/css">
+    .green{
+        background-color:#0bb078;
+    }
+</style>
+@if (HttpRuntime.Cache["LoggedInUsers"] != null)
+{
+    List<string> LoggedOnUsers = (List<string>)HttpRuntime.Cache["LoggedInUsers"];
+    if (LoggedOnUsers.Count > 0)
+    {
+        <div class="ChatBox">
+            <ul class="list-group">
+                @foreach (string user in LoggedOnUsers)
+                {
+                    <li class="list-group-item green">
+                        <div class="checkbox">
+                            <div><span class="glyphicon glyphicon-user"> @Html.Encode(user)</span> </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityUser>
+@{
+    ViewBag.Title = "User List";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @Html.ActionLink("New User", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>UserName</td>
+                    <td>Role</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@user.UserName </strong>
+                        </td>
+                        <td>
+                            @foreach (var item in user.Roles)
+                            {
+                                <strong>@item.RoleId</strong>
+                            }
+                        </td>
+                    </tr>
+                        
+                }
+            </tbody>
+        </table>
+       
+    </div>
+</div>
+
+

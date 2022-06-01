@@ -1,0 +1,15 @@
+C:\Users\Vishal\Dropbox\NSB\Workflow\Domain\bin\Release\Domain.dll
+C:\Users\Vishal\Dropbox\NSB\Workflow\Domain\bin\Release\Domain.pdb
+C:\Users\Vishal\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.csprojResolveAssemblyReference.cache
+C:\Users\Vishal\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.dll
+C:\Users\Vishal\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.pdb
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\Domain.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\Domain.pdb
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\AutoMapper.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\FluentNHibernate.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\Iesi.Collections.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\log4net.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\bin\Release\NHibernate.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.dll
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.pdb
+C:\Users\Administrator\Dropbox\NSB\Workflow\Domain\obj\Release\Domain.csprojResolveAssemblyReference.cache

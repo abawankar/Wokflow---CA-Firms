@@ -1,0 +1,119 @@
+ERROR 2016-04-30 23:21:50,139 42132ms InvoiceController      Create - Object reference not set to an instance of an object.
+ERROR 2016-04-30 23:25:29,178 24182ms InvoiceController      Create - Object reference not set to an instance of an object.
+ERROR 2016-05-02 16:01:41,780 44062ms AbstractBatcher        lambda_method - Could not execute query: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Invoice'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+ClientConnectionId:ef1cd3b4-c2a8-46c0-bff4-de47b957ba4a
+Error Number:208,State:1,Class:16
+ERROR 2016-05-02 16:01:41,881 44163ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-02 16:01:41,912 44194ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-02 16:01:41,914 44196ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-02 16:01:41,986 44268ms InvoiceController      List - could not execute query
+[ SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_ ]
+[SQL: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_]
+ERROR 2016-05-04 22:19:21,978 52103ms AbstractBatcher        lambda_method - Could not execute query: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Invoice'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+ClientConnectionId:37ccba9a-ae03-434f-a5c9-b7bc78ce14da
+Error Number:208,State:1,Class:16
+ERROR 2016-05-04 22:19:22,075 52201ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:19:22,109 52235ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:19:22,113 52239ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:19:22,193 52319ms InvoiceController      List - could not execute query
+[ SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_ ]
+[SQL: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_]
+ERROR 2016-05-04 22:22:32,847 242972ms AbstractBatcher        lambda_method - Could not execute query: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'Invoice'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+ClientConnectionId:84d928de-8459-44b3-9285-c5248e10b967
+Error Number:208,State:1,Class:16
+ERROR 2016-05-04 22:22:32,878 243004ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:22:32,920 243045ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:22:32,924 243049ms ADOExceptionReporter   lambda_method - Invalid object name 'Invoice'.
+ERROR 2016-05-04 22:22:32,991 243116ms InvoiceController      List - could not execute query
+[ SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_ ]
+[SQL: SELECT this_.Id as Id11_0_, this_.Date as Date11_0_, this_.InvoiceNo as InvoiceNo11_0_, this_.SerTax as SerTax11_0_, this_.TDS as TDS11_0_, this_.Status as Status11_0_, this_.Received as Received11_0_, this_.ClientId as ClientId11_0_ FROM [Invoice] this_]
+ERROR 2016-05-04 22:35:32,634 50356ms ClientFileController   List - Index was outside the bounds of the array.
+ERROR 2016-05-05 16:20:54,580 36895ms InvoiceController      Create - Index and length must refer to a location within the string.
+Parameter name: length
+ERROR 2016-05-05 22:15:08,914 51133ms AbstractBatcher        lambda_method - Could not execute query: SELECT client0_.ConsultId as ConsultId1_, client0_.ClientId as ClientId1_, clients1_.Id as Id2_0_, clients1_.Name as Name2_0_, clients1_.MobileNo as MobileNo2_0_, clients1_.EmailId as EmailId2_0_, clients1_.Address as Address2_0_, clients1_.PAN as PAN2_0_, clients1_.CIN as CIN2_0_, clients1_.DateOfIncorpration as DateOfIn8_2_0_, clients1_.TAN as TAN2_0_, clients1_.ServiceTaxNumber as Service10_2_0_, clients1_.TIN as TIN2_0_, clients1_.BankName as BankName2_0_, clients1_.BankAccountNumber as BankAcc13_2_0_, clients1_.AccountType as Account14_2_0_, clients1_.IFSCCode as IFSCCode2_0_ FROM ClientToEmployee client0_ left outer join [Clients] clients1_ on client0_.ClientId=clients1_.Id WHERE client0_.ConsultId=@p0
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ClientToEmployee'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+ClientConnectionId:9f381ecc-0542-4bac-9422-3a32262d943b
+Error Number:208,State:1,Class:16
+ERROR 2016-05-05 22:15:09,014 51233ms ADOExceptionReporter   lambda_method - Invalid object name 'ClientToEmployee'.
+ERROR 2016-05-05 22:15:09,061 51280ms ADOExceptionReporter   lambda_method - Invalid object name 'ClientToEmployee'.
+ERROR 2016-05-05 22:15:09,382 51601ms AbstractBatcher        lambda_method - Could not execute query: SELECT client0_.ConsultId as ConsultId1_, client0_.ClientId as ClientId1_, clients1_.Id as Id2_0_, clients1_.Name as Name2_0_, clients1_.MobileNo as MobileNo2_0_, clients1_.EmailId as EmailId2_0_, clients1_.Address as Address2_0_, clients1_.PAN as PAN2_0_, clients1_.CIN as CIN2_0_, clients1_.DateOfIncorpration as DateOfIn8_2_0_, clients1_.TAN as TAN2_0_, clients1_.ServiceTaxNumber as Service10_2_0_, clients1_.TIN as TIN2_0_, clients1_.BankName as BankName2_0_, clients1_.BankAccountNumber as BankAcc13_2_0_, clients1_.AccountType as Account14_2_0_, clients1_.IFSCCode as IFSCCode2_0_ FROM ClientToEmployee client0_ left outer join [Clients] clients1_ on client0_.ClientId=clients1_.Id WHERE client0_.ConsultId=@p0
+System.Data.SqlClient.SqlException (0x80131904): Invalid object name 'ClientToEmployee'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+ClientConnectionId:9f381ecc-0542-4bac-9422-3a32262d943b
+Error Number:208,State:1,Class:16
+ERROR 2016-05-05 22:15:09,422 51641ms ADOExceptionReporter   lambda_method - Invalid object name 'ClientToEmployee'.
+ERROR 2016-05-05 22:15:09,451 51669ms ADOExceptionReporter   lambda_method - Invalid object name 'ClientToEmployee'.
+ERROR 2016-05-07 13:19:16,644 27746ms ADOExceptionReporter   lambda_method - The value "2016-17" is not of type "System.Collections.IList" and cannot be used in this generic collection.
+Parameter name: value

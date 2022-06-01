@@ -1,0 +1,321 @@
+﻿@{
+    ViewBag.Title = "Invoice";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a id="refresh" title="Refresh page" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        @Html.DropDownList("comp", new SelectList((ViewBag.comp) as SelectList, "Value", "Text"), "All Company", new { @class = "search-box" })
+        @Html.DropDownList("client", new SelectList((ViewBag.client) as SelectList, "Value", "Text"),"All Clients", new { @class = "search-box" })
+        <input type="text" id="name" class="search-box" placeholder="Search" />
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+        <div id="dialog-edit" style="display: none"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Dialog form
+        $("#dialog-edit").dialog({
+            title: 'Add',
+            autoOpen: false,
+            resizable: false,
+            width: 600,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").show();
+                $(this).load(url);
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+
+        $('#table').jtable({
+            title: 'Invoice',
+            paging: true,
+            pagesize: 3,
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                CompId: {
+                    title: 'Company',
+                    width: '2%',
+                    options: '@Url.Action("GetCompanyOptions", "Company")',
+                },
+                ClientId: {
+                    title: 'Client',
+                    width: '2%',
+                    options: '@Url.Action("GetClientsOptions", "Clients")',
+                },
+                Date: {
+                    title: 'Date',
+                    width: '0.1%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Date != null)
+                            return moment(data.record.Date).format('DD/MMM/YYYY')
+                    },
+                },
+                InvoiceNo: {
+                    title: 'InvoiceNo',
+                    width: '0.5%',
+                    create: false,
+                    edit: false,
+                },
+                SerTax: {
+                    title: 'SerTax%',
+                    width: '0.1%',
+                    create: false,
+                    display: function (data) {
+                        return addCommas(data.record.SerTax.toFixed(2));
+                    }
+                },
+                TDS: {
+                    title: 'TDS%',
+                    width: '0.1%',
+                    create: false,
+                    display: function (data) {
+                        return addCommas(data.record.TDS.toFixed(2));
+                    }
+                },
+                TotalAmount: {
+                    title: 'TotalAmount',
+                    width: '0.1%',
+                    create: false,
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.TotalAmount != 0)
+                            return '<div style="float:right;">' + addCommas(data.record.TotalAmount.toFixed(2)) + '</div>'
+                        else
+                            return '<div style="float:right;">' + addCommas(data.record.TotalAmount.toFixed(2)) + '</div>'
+                    }
+                },
+                SerTaxAmount: {
+                    title: '+SerTaxAmount',
+                    width: '0.1%',
+                    create: false,
+                    edit: false,
+                    display: function (data) {
+                        return '<div style="float:right;">' + addCommas(data.record.SerTaxAmount.toFixed(2)) + '</div>'
+                    }
+                },
+                TDSAmount: {
+                    title: '-TDSAmount',
+                    width: '0.1%',
+                    create: false,
+                    edit: false,
+                    display: function (data) {
+                        return '<div style="float:right;">' + addCommas(data.record.TDSAmount.toFixed(2)) + '</div>'
+                    }
+                },
+                NetAmount: {
+                    title: 'NetAmount',
+                    width: '0.1%',
+                    create: false,
+                    edit: false,
+                    display: function (data) {
+                        return '<div style="float:right;">' + addCommas(data.record.NetAmount.toFixed(2)) + '</div>'
+                    }
+                },
+                Status: {
+                    title: 'PmtStatus',
+                    width: '0.1%',
+                    create: false,
+                    options: { '1': 'Pending', '2': 'Received' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='red'>" + 'Pending' + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='green'>" + 'Received' + "</div>";
+                    },
+                },
+                Received: {
+                    title: 'ReceivedOn',
+                    width: '0.1%',
+                    type: 'date',
+                    create: false,
+                    display: function (data) {
+                        if (data.record.Received != null)
+                            return moment(data.record.Received).format('DD/MMM/YYYY')
+                    },
+                },
+                //Child table
+                InvoiceTrn: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (trn) {
+                        var $img = $('<img title="InvoiceTrn" class="child-opener-image" src="Content/Images/list.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: "Invoice " + trn.record.InvoiceNo + " -Details",
+                                actions: {
+                                    listAction: '@Url.Action("InvTrnList")?invid=' + trn.record.Id,
+                                    deleteAction: '@Url.Action("DeleteTrn")',
+                                    updateAction: '@Url.Action("UpdateTrn")',
+                                    createAction: '@Url.Action("AddInvTrn")?invid=' + trn.record.Id
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    TaskNo: {
+                                        title: 'TaskNo',
+                                        width: '1%',
+                                        create: false,
+                                        edit: false,
+                                        display: function (data) {
+                                            if (data.record.Task != null)
+                                                return data.record.Task.FileNumber
+                                        },
+                                    },
+                                    Particulars: {
+                                        title: 'Particulars',
+                                        width: '30%',
+                                        type: 'textarea'
+                                    },
+                                    Amount: {
+                                        title: 'Amount',
+                                        width: '1%',
+                                        display: function (data) {
+                                            return addCommas(data.record.Amount.toFixed(2));
+                                        }
+                                    },
+                                },
+                                toolbar: {
+                                    items: [{
+                                        icon: '/Content/Images/Add.png',
+                                        text: 'Add Completed Task',
+                                        click: function () {
+                                            url = $('@Html.ActionLink("task", "CompletedTaskList")').attr('href');
+                                            url = url + "?invid=" + trn.record.Id + "&clientid=" + trn.record.ClientId,
+                                            $("#dialog-edit").dialog("option", "title", "Completed Task");
+                                            $("#dialog-edit").dialog('open');
+                                            return false;
+                                        }
+                                    }]
+                                },
+                                formCreated: function (event, data) {
+                                    data.form.find('textarea[name="Particulars"]').addClass('validate[required]');
+                                    data.form.find('input[name="Amount"]').addClass('validate[required]');
+                                    data.form.validationEngine();
+                                },
+                                formSubmitting: function (event, data) {
+                                    return data.form.validationEngine('validate');
+                                },
+                                formClosed: function (event, data) {
+                                    data.form.validationEngine('hide');
+                                    data.form.validationEngine('detach');
+                                }
+
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                print: {
+                    title: "",
+                    edit: false,
+                    create: false,
+                    width: '0.1%',
+                    display: function (data) {
+                        $img = $('<img title="Print Invoice" class="child-opener-image" src="Content/Images/print.png" width="22px" />');
+                        $img.click(function () {
+                            var url = "/Invoice/PrintInvoice/" + data.record.Id;
+                            window.open(url);
+                        });
+                        return $img;
+                    }
+                },
+                //End of Contact Child Table
+
+            },
+
+            formCreated: function (event, data) {
+                data.form.find('input[name="Date"]').addClass('validate[required],custom[date]');
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                var compid = $("#Edit-CompId").val();
+                var client = $("#Edit-ClientId").val();
+
+                if (compid == 0) {
+                    alert("Select Company");
+                    e.preventDefault();
+                    return;
+                }
+                if (client == 0) {
+                    alert("Select Client");
+                    e.preventDefault();
+                    return;
+                }
+                
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#refresh").click(function (e) {
+            $('#name').val('');
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val(), client: $('#client').val(), comp: $('#comp').val()
+                });
+            }
+        });
+
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                name: $('#name').val(), client: $('#client').val(), comp: $('#comp').val()
+            });
+        });
+    });
+</script>

@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "Client List";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Employee: @Html.DropDownList("emp", new SelectList((ViewBag.emp) as SelectList, "Value", "Text"), new { @class = "search-box" })
+        <input type="text" class="search-box" id="name1" placeholder="Search.." />
+        <button id="search1" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="clientTable"></div>
+    </div>
+</div>
+<button role="button" aria-disabled="false" id="ConsultantClients" title="Add Clients" disabled>
+    Add
+</button>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#clientTable').jtable({
+            title: 'Clients',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            selecting: true,
+            multiselect: true,
+            selectOnRowClick:false,
+            selectingCheckboxes: true,
+            actions: {
+                listAction: '@Url.Action("ListOfClients")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Name: {
+                    title: 'Name',
+                    width: '10%'
+                }
+            },
+            selectionChanged: function () {
+                var $selecedRows = $('#clientTable').jtable('selectedRows');
+                if ($selecedRows.length != 0) {
+                    $('#ConsultantClients').prop('disabled', false);
+                }
+                else {
+                    $('#ConsultantClients').prop('disabled', true);
+                }
+            }
+        });
+        $('#clientTable').jtable('load', { id: $('#emp').val() });
+
+        //Delete selected currencies
+        $('#ConsultantClients').button().click(function () {
+            var emp = $("#emp").val();
+            var $selecedRows = $('#clientTable').jtable('selectedRows');
+            var list = emp;
+            $selecedRows.each(function () {
+                var record = $(this).data('record');
+                list = list + "," + record.Id;
+            });
+            $.ajax({
+                url: "@Url.Action("AddClients", "Employee")",
+                type: 'POST',
+                datatype: 'HTML',
+                data: { id: emp, list: list },
+                success: function (data) {
+                    alert("Clients Assigned");
+                    $('#clientTable').jtable('load', {
+                        id: $('#emp').val()
+                    });
+                },
+                error: function () {
+                }
+            });
+        });
+
+        $("#search1").click(function (e) {
+            e.preventDefault();
+            $('#clientTable').jtable('load', {
+                id: $('#emp').val(), name: $('#name1').val()
+            });
+        });
+        
+    });
+</script>

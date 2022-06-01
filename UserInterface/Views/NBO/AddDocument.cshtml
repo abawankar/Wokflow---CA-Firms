@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Add Document";
+}
+
+
+@using (Html.BeginForm("UploadImage", "NBO", FormMethod.Post, new { id = "newtask", enctype = "multipart/form-data" }))
+{
+    <input type="hidden" value="@ViewBag.sampId" name="sampId" />
+    <table>
+        <tr>
+            <td colspan="2"><input type="file" name="imageFile" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Upload" /></td>
+        </tr>
+    </table>
+
+
+
+}

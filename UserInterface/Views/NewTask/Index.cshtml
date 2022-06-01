@@ -1,0 +1,431 @@
+﻿@{
+    ViewBag.Title = "New Task";
+}
+
+@section Styles{
+    <link href="@Url.Content("~/Scripts/js/infragistics.css")" rel="stylesheet" type="text/css" />
+}
+@section Script{
+    <!-- Ignite UI Required Combined JavaScript Files -->
+    <script src="@Url.Content("~/Scripts/js/infragistics.core.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/js/infragistics.lob.js")" type="text/javascript"></script>
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        Assign New Task
+
+        @if (TempData["message"] != null)
+        {
+            <div id="message" class="successMessage"> @TempData["message"] </div>
+        }
+        @if (TempData["mail"] != null)
+        {
+            <div id="mail" class="successMessage"> @TempData["mail"] </div>
+        }
+        
+    </div>
+    <div class="panel-body" style="padding-bottom:0px;">
+        
+        @using (Html.BeginForm("CreateTask", "NewTask", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Assigened Work To:</label>
+                    <div class="col-md-8">
+                        @Html.DropDownList("type", new SelectList((ViewBag.type) as SelectList, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group" id="conslt" style="display:none">
+                    <label class="col-md-4 control-label">Consultant</label>
+                    <div class="col-md-8">
+                        @Html.DropDownList("consltId", new SelectList((ViewBag.conslt) as SelectList, "Value", "Text"), "--Select--", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group" id="empid">
+                    <label class="col-md-4 control-label">Assignee</label>
+                    <div class="col-md-8">
+                        <input name="Assignerlist" id="checkboxSelectCombo" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Clients</label>
+                    <div class="col-md-8">
+                        @Html.DropDownList("client", new SelectList((ViewBag.client) as SelectList, "Value", "Text"), "--Select--", new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-4 control-label">File Number</label>
+                    <div class="col-md-8">
+                        @Html.DropDownList("NboId", new SelectList((ViewBag.job) as SelectList, "Value", "Text"), "--Select--", new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Task</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="task" name="task">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Start Date</label>
+                    <div class="col-md-8">
+                        <input type="date" class="form-control" id="start" name="start" value="@ViewBag.today">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Due Date</label>
+                    <div class="col-md-8">
+                        <input type="date" class="form-control" id="due" name="due" value="@ViewBag.today">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Compl Date</label>
+                    <div class="col-md-8">
+                        <input type="date" class="form-control" id="compl" name="compl">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Notes</label>
+                    <div class="col-md-8">
+                        <textarea type="text" class="form-control" id="notes" name="notes"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-3 col-md-8">
+                        <button type="submit" id="submit" class="btn btn-success" aria-label="Left Align">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        }
+
+    </div>
+
+    <div class="panel-body" style="padding:0px;">
+        <div id="table"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#message").fadeIn("Slow").delay(2000).fadeOut("Slow");
+        $("#mail").fadeIn("Slow").delay(2000).fadeOut("Slow");
+
+        $(function () {
+            $.getJSON("/Employee/GetEmployee", function (jd) {
+                var data = JSON.parse(JSON.stringify(jd));
+                $("#checkboxSelectCombo").igCombo({
+                    width: "270px",
+                    dataSource: data,
+                    textKey: "Name",
+                    valueKey: "Id",
+                    multiSelection: "onWithCheckboxes"
+                });
+
+            });
+        });
+
+        $('#table').jtable({
+            title: 'Todays Assigned Task',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update", "TaskManager")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Date: {
+                    title: 'Date',
+                    width: '2%',
+                    type: 'date',
+                    edit:false,
+                    display: function (data) {
+                        if (data.record.Date != null)
+                            return moment(data.record.Date).format('DD/MMM/YYYY')
+                    },
+                },
+                Assigner: {
+                    title: 'Assigner',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Assigneer != null)
+                            return data.record.Assigneer.Name;
+                    }
+                },
+                Clients: {
+                    title: 'Client',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.Client.Name;
+                    }
+                },
+                FileNumber: {
+                    title: 'TaskNumber',
+                    width: '2%',
+                    edit:false,
+                    display: function (data) {
+                        if (data.record.FileNumber != null)
+                            return data.record.FileNumber.FileNumber;
+                    }
+                },
+                Task: {
+                    title: 'Task',
+                    width: '2%',
+                    edit: false,
+                },
+                Notes: {
+                    title: 'Notes',
+                    width: '2%',
+                    type: 'textarea'
+                },
+                ConsltId: {
+                    title: 'Consultant',
+                    width: '2%',
+                    edit: false,
+                    options: '@Url.Action("GetConsultantOptions", "Consultant")',
+                },
+                Assignee: {
+                    title: 'Assignee',
+                    width: '2%',
+                    edit: false,
+                    display: function (data) {
+                        var emp = "";
+                        if (data.record.Contacts != null) {
+                            $.each(data.record.Contacts, function (data, record) {
+                                if (emp == "") {
+                                    emp = record.Name;
+                                }
+                                else {
+                                    emp = emp + "," + record.Name;
+                                }
+
+                            });
+                        }
+                        return emp;
+                    }
+                },
+                Start: {
+                    title: 'Start',
+                    width: '2%',
+                    type: 'date',
+                    edit: false,
+                    display: function (data) {
+                        if (data.record.Start != null)
+                            return moment(data.record.Start).format('DD/MMM/YYYY')
+                    },
+                },
+                Due: {
+                    title: 'Due',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Due != null)
+                            return moment(data.record.Due).format('DD/MMM/YYYY')
+                    },
+                },
+                Compl: {
+                    title: 'Compl',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Compl != null)
+                            return moment(data.record.Compl).format('DD/MMM/YYYY')
+                    },
+                },
+                StatusPercentage: {
+                    title: 'Status%',
+                    width: '0.1%',
+                    options: { '0': '0 %', '25': '25 %', '50': '50 %', '75': '75 %', '100': '100 %' },
+                    display: function (data) {
+                        return data.record.StatusPercentage + ' %';
+                    },
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Start', '2': 'Cancelled', '3': 'Completed' },
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='green'>" + "Start" + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='red'>" + 'Cancelled' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='seagreen'>" + 'Completed' + "</div>";
+                    }
+                }
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+
+                $("#Edit-Due").removeClass('hasDatepicker');
+                $("#Edit-Due").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'yy-mm-dd' });
+
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#submit").click(function (e) {
+
+            var task = $('#task').val();
+            var startdate = $('#start').val();
+            var duedate = $('#due').val();
+
+            if (task == "") {
+                alert("Please type task description");
+                return false;
+            }
+            if (startdate == "") {
+                alert("Please select start date");
+                return false;
+            }
+            if (duedate == "") {
+                duedate = startdate;
+            }
+            if (new Date(startdate) > new Date(duedate)) {
+                alert("Start date should not less than due date");
+                return false;
+            }
+
+            var empid = $("#checkboxSelectCombo").igCombo("values");
+            $("#checkboxSelectCombo").val(empid);
+
+        });
+
+        $("#checkboxSelectCombo").bind("igcomboselectionchanged", comboValueChanged);
+
+        function comboValueChanged(evt, ui) {
+            //if ($("#checkboxSelectCombo").igCombo("selectedIndex") != -1) {
+                var cid = $("#checkboxSelectCombo").igCombo("values");
+                var client = $('#client');
+                $.ajax({
+                    type: 'POST',
+                    datatype: 'JSON',
+                    url: "@Url.Action("GetEmployeeClients", "Clients")",
+                    data: { cid: cid },
+                success: function (data) {
+                    var items = "";
+                    items += "<option value=\"0\">--Select--</option>";
+                    $.each(data.Result, function (i, item) {
+                        items = items + "<option value=\"" + item.Id + "\">" + item.Name + "</option>";
+                    });
+                    client.html("");
+                    client.html(items);
+                },
+                error: function () {
+                }
+            });
+            //}
+        }
+
+        $("#type").change(function (e) {
+            var type = $("#type").val();
+            if (type == "C") {
+                $("#conslt").show();
+                $("#empid").hide();
+            } else {
+                $("#empid").show();
+                $("#conslt").hide();
+                var cid = 0;
+                var client = $('#client');
+                $.ajax({
+                    type: 'POST',
+                    datatype: 'JSON',
+                    url: "@Url.Action("GetConsultantClients", "Clients")",
+                    data: { cid: cid },
+                    success: function (data) {
+                        var items = "";
+                        items += "<option value=\"0\">--Select--</option>";
+                        $.each(data.Result, function (i, item) {
+                            items = items + "<option value=\"" + item.Id + "\">" + item.Name + "</option>";
+                        });
+                        client.html("");
+                        client.html(items);
+                    },
+                    error: function () {
+                    }
+                });
+
+            }
+        });
+
+        $("#consltId").change(function (e) {
+            var cid = $("#consltId").val();
+            e.preventDefault();
+            var client = $('#client');
+            $.ajax({
+                type: 'POST',
+                datatype: 'JSON',
+                url: "@Url.Action("GetConsultantClients", "Clients")",
+                data: { cid: cid },
+                success: function (data) {
+                    var items = "";
+                    items += "<option value=\"0\">--Select--</option>";
+                    $.each(data.Result, function (i, item) {
+                        items = items + "<option value=\"" + item.Id + "\">" + item.Name + "</option>";
+                    });
+                    client.html("");
+                    client.html(items);
+                },
+                error: function () {
+                }
+            });
+        });
+
+        $("#client").change(function (e) {
+            var cid = $("#client").val();
+            e.preventDefault();
+            var file = $('#NboId');
+            $.ajax({
+                type: 'POST',
+                datatype: 'JSON',
+                url: "@Url.Action("GetClientsFile", "Clients")",
+                data: { cid: cid },
+                success: function (data) {
+                    var items = "";
+                    items += "<option value=\"0\">--Select--</option>";
+                    $.each(data.Result, function (i, item) {
+                        items = items + "<option value=\"" + item.Id + "\">" + item.Name + "</option>";
+                    });
+                    file.html("");
+                    file.html(items);
+                },
+                error: function () {
+                }
+            });
+        });
+
+    });
+</script>
+

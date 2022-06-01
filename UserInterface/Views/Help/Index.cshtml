@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Help";
+}
+
+<style type="text/css">
+    .content-container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+    }
+ .content-container div {
+     display: none;
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+ }
+</style>
+
+<div class="panel panel-info">
+    <div class="panel-heading"> Help  </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="dark-col col-sm-2 col-md-2">
+                <ul>
+                    <li><a class="link" href="#" data-rel="content1">Invoice Genration</a></li>
+                    <li><a class="link" href="#" data-rel="content2">Task</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-10">
+                <div class="content-container">
+                    <div id="content1">@{Html.RenderAction("helpInvoice");}</div>
+                    <div id="content2">task</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".link").click(function (e) {
+        e.preventDefault();
+        $('.content-container div').fadeOut('slow');
+        $('#' + $(this).data('rel')).fadeIn('slow');
+    });
+</script>
+

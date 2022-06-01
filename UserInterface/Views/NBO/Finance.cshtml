@@ -1,0 +1,178 @@
+﻿@{
+    ViewBag.Title = "Finance";
+}
+
+<input type="hidden" id="nboid" name="nboid" value="@ViewBag.nboid" />
+<input type="hidden" id="file" name="file" value="@ViewBag.filenumber" />
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Receivable
+    </div>
+    <div class="panel-body">
+        <div id="incoming"></div>
+    </div>
+    <div class="panel-body">
+        <table class="table-bordered">
+            <tr>
+                <th>Total Amount</th>
+                <th>Total Received</th>
+                <th>Balance</th>
+            </tr>
+            <tr>
+                <td><input type="text" class="search-box" readonly id="amount" /></td>
+                <td><input type="text" class="search-box" readonly id="recdAmount" /></td>
+                <td><input type="text" class="search-box" readonly id="recdBalance" /></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var receivableAmount = 0;
+        var receivedAmount = 0;
+        var balance = 0;
+    
+        $('#incoming').jtable({
+            title: 'Receivable +',
+            paging: false,
+            sorting: false,
+            actions: {
+                listAction: '@Url.Action("List","Receivable")?nboid=' + $("#nboid").val(),
+                updateAction: '@Url.Action("Update","Receivable")',
+                deleteAction: '@Url.Action("Delete","Receivable")',
+                createAction: '@Url.Action("Create","Receivable")?nboid=' + $("#nboid").val()
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Incoming: {
+                    title: '',
+                    width: '2%',
+                    list: false,
+                    input: function (data) {
+                        return '<div style="font-weight:bold;color:red;">Receivable +</div>';
+                    }
+                },
+                FileNumber: {
+                    title: 'Refrence no',
+                    width: '2%',
+                    list:false,
+                    input: function (data) {
+                        return '<input type="text" readonly class="jtable-input-readonly" name="FileNumber" value="' + $("#file").val() + '"/>';
+                    }
+                },
+                ClientName: {
+                    title: 'Client',
+                    width: '2%',
+                    create:false,
+                    input: function (data) {
+                        return '<input type="text" readonly class="jtable-input-readonly" name="FileNumber" value="' + data.value + '"/>';
+                    }
+                },
+                Amount: {
+                    title: 'Amount',
+                    width: '10%',
+                    display: function (data) {
+                        if (data.record.Amount != 0 || data.record.Amount != null)
+                            return '<div style="float:right;">' + addCommas(data.record.Amount.toFixed(2)) + '</div>'
+                        else
+                            return 0;
+                    }
+                },
+                DueDate: {
+                    title: 'DueDate',
+                    type: 'date',
+                    width: '10%',
+                    display: function (data) {
+                        return moment(data.record.DueDate).format('DD-MMM-YYYY')
+                    },
+                },
+                DepositType: {
+                    title: 'Deposit Type',
+                    width: '10%',
+                    list:false
+                },
+                Description: {
+                    title: 'Description',
+                    width: '10%',
+                    list: false
+                },
+                DateReceived: {
+                    title: 'Date Received',
+                    type: 'date',
+                    width: '2%',
+                    display: function (data) {
+                        return moment(data.record.DateReceived).format('DD-MMM-YYYY')
+                    },
+                    list: false
+                },
+                AmountReceived: {
+                    title: 'AmountReceived',
+                    width: '10%',
+                    display: function (data) {
+                        if (data.record.AmountReceived != 0 || data.record.AmountReceived != null)
+                            return '<div style="float:right;">' + addCommas(data.record.AmountReceived.toFixed(2)) + '</div>'
+                        else
+                            return 0;
+                    }
+                },
+                Balance: {
+                    title: 'Balance',
+                    width: '2%',
+                    edit: false,
+                    create: false,
+                    display: function (data) {
+                        if (data.record.Balance != 0 || data.record.Balance != null)
+                            return '<div style="float:right;">' + addCommas(data.record.Balance.toFixed(2)) + '</div>'
+                        else
+                            return 0;
+                    }
+                },
+                PaymentMode: {
+                    title: 'Payment Mode',
+                    width: '10%',
+                    options:{'Cash':'Cash','Cheque':'Cheque','Bank Transfer':'Bank Transfer','Credit Card':'Credit Card'},
+                    list: false
+                },
+                Status: {
+                    title: 'Status',
+                    width: '2%',
+                    options: { '0': 'Open', '1': 'Closed' },
+                },
+
+
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="DueDate"]').addClass('validate[required,custom[date]]');
+                data.form.find('input[name="Amount"]').css({ 'background-color': '#FF0' });
+                data.form.find('input[name="AmountReceived"]').css({ 'background-color': '#FF0' });
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            },
+            rowInserted: function (event, data) {
+                receivableAmount = receivableAmount + data.record.Amount;
+                receivedAmount = receivedAmount + data.record.AmountReceived;
+                document.getElementById('amount').value = addCommas(receivableAmount.toFixed(2));
+                document.getElementById('recdAmount').value = addCommas(receivedAmount.toFixed(2));
+                document.getElementById('recdBalance').value = addCommas((receivableAmount - receivedAmount).toFixed(2));
+            },
+
+        });
+        $('#incoming').jtable('load');
+    });
+</script>

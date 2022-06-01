@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Clients Assigned To Employee";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a id="refresh" title="Refresh page" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        @Html.DropDownList("emp", new SelectList((ViewBag.emp) as SelectList, "Value", "Text"),"All Employee", new { @class = "search-box" })
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#table').jtable({
+            title: 'Clients Assigned To Employee',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            useBootstrap: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                ClientName: {
+                    title: 'Client',
+                    width: '12%'
+                },
+                EmpName: {
+                    title: 'EmpName',
+                    width: '12%'
+                },
+            },
+            toolbar: {
+                items: [{
+                    icon: '/Content/Images/pdf.png',
+                    text: 'Export',
+                    click: function () {
+                        var url = 'EmployeeAssignedClient/Export';
+                        window.open(url);
+                    }
+                }]
+            },
+        });
+        $('#table').jtable('load');
+
+        $("#refresh").click(function (e) {
+            $('#emp').val('');
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                empid: $('#emp').val()
+            });
+        });
+    });
+</script>

@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "Client List";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Client: @Html.DropDownList("client1", new SelectList((ViewBag.client) as SelectList, "Value", "Text"), new { @class = "search-box" })
+        <input type="hidden" id="invid" name="invid" value="@ViewBag.invid" />
+    </div>
+    <div class="panel-body">
+        <div id="taskTable"></div>
+    </div>
+</div>
+<button role="button" aria-disabled="false" id="ConsultantClients" title="Add Task" disabled>
+    Add
+</button>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#taskTable').jtable({
+            title: 'Completed Task',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            selecting: true,
+            multiselect: true,
+            selectOnRowClick: false,
+            selectingCheckboxes: true,
+            actions: {
+                listAction: '@Url.Action("ListOfTask")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                FileNumber: {
+                    title: 'TaskNo',
+                    width: '2%',
+                },
+                TaskTypeId: {
+                    title: 'TaskTypes',
+                    width: '4%',
+                    display: function (data) {
+                        return data.record.TaskTypes.Name;
+                    }
+                },
+                ClientId: {
+                    title: 'Client',
+                    width: '4%',
+                    display: function (data) {
+                        return data.record.Client.Name;
+                    }
+                },
+                Completed: {
+                    title: 'Completed',
+                    width: '2%',
+                    type: 'date',
+                    create: false,
+                    display: function (data) {
+                        if (data.record.Completed != null)
+                            return moment(data.record.Completed).format('DD/MMM/YYYY')
+                    },
+                },
+                Cost: {
+                    title: 'Cost',
+                    width: '2%',
+                    display: function (data) {
+                        if (data.record.Cost != 0 || data.record.Cost != null)
+                            return '<div style="float:right;">' + addCommas(data.record.Cost.toFixed(2)) + '</div>'
+                        else
+                            return 0;
+                    }
+                },
+            },
+            selectionChanged: function () {
+                var $selecedRows = $('#taskTable').jtable('selectedRows');
+                if ($selecedRows.length != 0) {
+                    $('#ConsultantClients').prop('disabled', false);
+                }
+                else {
+                    $('#ConsultantClients').prop('disabled', true);
+                }
+            }
+        });
+        $('#taskTable').jtable('load', { id: $('#client1').val() });
+
+        //Delete selected currencies
+        $('#ConsultantClients').button().click(function () {
+            var invid = $("#invid").val();
+            var $selecedRows = $('#taskTable').jtable('selectedRows');
+            var list = invid;
+            $selecedRows.each(function () {
+                var record = $(this).data('record');
+                list = list + "," + record.Id;
+            });
+            $.ajax({
+                url: "@Url.Action("AddTask", "Invoice")",
+                type: 'POST',
+                datatype: 'HTML',
+                data: { id: invid, list: list },
+                success: function (data) {
+                    alert("Task Added");
+                    $('#taskTable').jtable('load', { id: 0});
+                },
+                error: function () {
+                }
+            });
+        });
+    });
+</script>

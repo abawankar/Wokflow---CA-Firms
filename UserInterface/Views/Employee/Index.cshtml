@@ -1,0 +1,292 @@
+﻿@{
+    ViewBag.Title = "Employee";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a id="refresh" title="Refresh page" style="padding-top:8px;" class="pull-right" href="#">
+            <span id="spin" class="glyphicon glyphicon-refresh"></span>
+        </a>
+        @Html.ActionLink("Dashboard", "Index", "Home") |
+        @Html.DropDownList("status", new SelectList((ViewBag.status) as SelectList, "Value", "Text"), new { @class = "search-box" })
+        <input type="text" class="search-box" id="name" placeholder="Search.." />
+        <button id="search" type="button" class="btn btn-info btn-sm">
+            <span class="glyphicon glyphicon-search"></span> Search
+        </button>
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+        <div id="dialog-edit" style="display: none"></div>
+        <div id="dialog-client" style="display: none"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Dialog form
+        $("#dialog-edit").dialog({
+            title: 'Add',
+            autoOpen: false,
+            resizable: false,
+            width: 600,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").show();
+                $(this).load(url);
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+
+        //Dialog form
+        $("#dialog-client").dialog({
+            title: 'Add',
+            autoOpen: false,
+            resizable: false,
+            width: 600,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").show();
+                $(this).load(url);
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+
+
+        $('#table').jtable({
+            title: 'Employee',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+                updateAction: '@Url.Action("Update")',
+                createAction: '@Url.Action("Create")'
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width: '1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                Code: {
+                    title: 'Code',
+                    width: '2%'
+                },
+                Name: {
+                    title: 'Name',
+                    width: '2%'
+                },
+                Address: {
+                    title: 'Address',
+                    width: '2%',
+                    type: 'textarea'
+                },
+                CompId: {
+                    title: 'Company',
+                    width: '4%',
+                    options: '@Url.Action("GetCompanyOptions", "Company")',
+                },
+                PosiId: {
+                    title: 'Positions',
+                    width: '4%',
+                    options: '@Url.Action("GetPositionOptions", "Positions")',
+                },
+                PAN: {
+                    title: 'PAN',
+                    width: '2%'
+                },
+                DOB: {
+                    title: 'DOB',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.DOB != null)
+                            return moment(data.record.DOB).format('DD/MMM/YYYY')
+                    },
+                },
+                Emailid: {
+                    title: 'Emailid',
+                    width: '2%'
+                },
+                MobileNo: {
+                    title: 'MobileNo',
+                    width: '2%'
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Active', '2': 'InActive' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='green'>" + 'Active' + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='red'>" + 'InActive' + "</div>";
+                    },
+                },
+                Rights: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (rights) {
+                        var $img = $('<img title="Employee Rights" class="child-opener-image" src="Content/Images/right.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: rights.record.Name + " - Rights",
+                                actions: {
+                                    listAction: '@Url.Action("GetEmpRights")?id=' + rights.record.Id,
+                                    deleteAction: '@Url.Action("DeleteRights")?empId=' + rights.record.Id,
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    MnuName: {
+                                        title: 'MnuName',
+                                        width: '12%'
+                                    },
+                                    Description: {
+                                        title: 'Description',
+                                        width: '12%'
+                                    },
+                                },
+                                toolbar: {
+                                    items: [{
+                                        icon: '/Content/Images/Add.png',
+                                        text: 'Assign Employee Rights',
+                                        click: function () {
+                                            url = $('@Html.ActionLink("Assigned EmpRights", "EmpRightsList")').attr('href');
+                                            url = url + "?id=" + rights.record.Id,
+                                            $("#dialog-edit").dialog("option", "title", "Assign Rights");
+                                            $("#dialog-edit").dialog('open');
+                                            return false;
+                                        }
+                                    }]
+                                }
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                Clients: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (client) {
+                        var $img = $('<img title="Clients" class="child-opener-image" src="Content/Images/user.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: client.record.Name + " - Assigned Clients",
+                                actions: {
+                                    listAction: '@Url.Action("GetClients")?id=' + client.record.Id,
+                                    deleteAction: '@Url.Action("DeleteClients")?empid=' + client.record.Id,
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Name: {
+                                        title: 'Name',
+                                        width: '9%'
+                                    }
+                                },
+                                toolbar: {
+                                    items: [{
+                                        icon: '/Content/Images/Add.png',
+                                        text: 'Assign Clients',
+                                        click: function () {
+                                            url = $('@Html.ActionLink("Assigned Clients", "ClientList")').attr('href');
+                                            url = url + "?id=" + client.record.Id,
+                                            $("#dialog-client").dialog("option", "title", "Assign Clients");
+                                            $("#dialog-client").dialog('open');
+                                            return false;
+                                        }
+                                    }]
+                                }
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                data.form.find('input[name="Emailid"]').addClass('validate[required],custom[email]');
+                data.form.find('input[name="MobileNo"]').addClass('validate[required],custom[mobile]');
+
+                $("#Edit-DOB").removeClass('hasDatepicker');
+                $("#Edit-DOB").datepicker({ changeMonth: true, changeYear: true, dateFormat: 'yy-mm-dd' });
+
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $("#refresh").click(function (e) {
+            $('#name').val('');
+            $("#spin").addClass("spin");
+            e.preventDefault();
+            $('#table').jtable('load');
+            $("#spin").removeClass("spin");
+        });
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $('#table').jtable('load', {
+                name: $('#name').val(), status: $('#status').val()
+            });
+        });
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val(), status: $('#status').val()
+                });
+            }
+        });
+    });
+</script>

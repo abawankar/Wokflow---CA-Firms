@@ -1,0 +1,293 @@
+﻿
+@{
+    ViewBag.Title = "Task";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <input type="text" class="search-box" id="name" placeholder="Search.." />
+    </div>
+    <div class="panel-body">
+        <div id="table"></div>
+        <div id="dialog-edit" style="display: none"> </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .cursor {
+        cursor: pointer;
+    }
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //Dialog form
+        $("#dialog-edit").dialog({
+            title: 'Print Labels',
+            autoOpen: false,
+            resizable: false,
+            width: 350,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar-close").show();
+                $(this).load(url);
+            },
+            buttons: {
+                "Cancel": function () {
+                    $(this).dialog("close");
+                },
+            }
+        });
+        //End dialog form
+
+        $('#table').jtable({
+            title: 'Task',
+            paging: true,
+            pagesize: 3,
+            sorting: true,
+            defaultSorting: 'Name ASC',
+            actions: {
+                listAction: '@Url.Action("List")',
+            },
+            fields: {
+                Id: {
+                    title: 'Id',
+                    width:'1%',
+                    key: true,
+                    create: false,
+                    edit: false,
+                    list: false
+                },
+                FileNumber: {
+                    title: 'TaskNo',
+                    width: '2%'
+                },
+                TaskTypeId: {
+                    title: 'TaskTypes',
+                    width: '4%',
+                    options: '@Url.Action("GetTaskTypesOptions", "TaskTypes")',
+                },
+                ClientId: {
+                    title: 'Client Name',
+                    width: '4%',
+                    options: '@Url.Action("GetClientsOptions", "Clients")',
+                },
+                Received: {
+                    title: 'Received',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Received != null)
+                            return moment(data.record.Received).format('DD/MMM/YYYY')
+                    },
+                },
+                DueDate: {
+                    title: 'DueDate',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.DueDate != null)
+                            return moment(data.record.DueDate).format('DD/MMM/YYYY')
+                    },
+                },
+                Completed: {
+                    title: 'Completed',
+                    width: '2%',
+                    type: 'date',
+                    display: function (data) {
+                        if (data.record.Completed != null)
+                            return moment(data.record.Completed).format('DD/MMM/YYYY')
+                    },
+                },
+                Cost: {
+                    title: 'Cost',
+                    width: '2%'
+                },
+                Status: {
+                    title: 'Status',
+                    width: '0.1%',
+                    options: { '1': 'Running', '2': 'Done', '3': 'Cancelled' },
+                    defaultValue: '1',
+                    display: function (data) {
+                        if (data.record.Status == 1)
+                            return "<div class='blue'>" + 'RUN' + "</div>";
+                        if (data.record.Status == 2)
+                            return "<div class='green'>" + 'Done' + "</div>";
+                        if (data.record.Status == 3)
+                            return "<div class='red'>" + 'CAN' + "</div>";
+                    },
+                },
+                //Add Document
+                Attachments: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (img) {
+                        var $img = $('<img title="Attachments" class="child-opener-image" src="Content/Images/attach.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: "Document: " + img.record.FileNumber,
+                                actions: {
+                                    listAction: '@Url.Action("DocumentList","NBO")?id=' + img.record.Id,
+
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    FileType: {
+                                        title: '',
+                                        width: '1%',
+                                        edit: false,
+                                        display: function (att) {
+                                            var $img = $('<img title="Documents" class="child-opener-image cursor" src="Content/Images/attach.png" width="20px" />');
+                                            $img.click(function () {
+                                                var file = att.record.FileOnServer;
+                                                var url = "Upload/Document/" + file
+                                                window.open(url);
+                                            });
+                                            return $img
+                                        }
+                                    },
+                                    FileName: {
+                                        title: 'FileName',
+                                        width: '20%',
+                                        edit: false,
+                                    },
+                                    FileSize: {
+                                        title: 'File Size',
+                                        width: '20%',
+                                        edit: false,
+                                    }
+
+                                },
+                                toolbar: {
+                                    items: [{
+                                        icon: '/Content/Images/Add.png',
+                                        text: 'Add Document',
+                                        click: function () {
+                                            var str = $('@Html.ActionLink("AddDocument", "AddDocument","NBO")').attr('href');
+                                            url = str + "/" + img.record.Id
+                                            $("#dialog-edit").dialog("option", "title", "Add Document");
+                                            $("#dialog-edit").dialog('open');
+                                            return false;
+                                        }
+                                    }]
+                                }
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //Child Table End*/
+                //Child table for Factory Contacts
+                Comments: {
+                    title: '',
+                    width: '0.1%',
+                    sorting: false,
+                    create: false,
+                    edit: false,
+                    listClass: 'child-opener-image-column',
+                    display: function (cmt) {
+                        var $img = $('<img title="Comments" class="child-opener-image" src="Content/Images/comnt.png" width="20px" />');
+                        $img.click(function () {
+                            $('#table').jtable('openChildTable', $img.closest('tr'),
+                            {
+                                title: cmt.record.FileNumber + " -Task Comments",
+                                actions: {
+                                    listAction: '@Url.Action("TaskComments","NBO")?id=' + cmt.record.Id,
+                                },
+                                fields: {
+                                    Id: {
+                                        title: 'Id',
+                                        width: '1%',
+                                        key: true,
+                                        create: false,
+                                        edit: false,
+                                        list: false
+                                    },
+                                    Date: {
+                                        title: 'Date',
+                                        width: '0.1%',
+                                        type: 'date',
+                                        edit: false,
+                                        create: false,
+                                        display: function (data) {
+                                            if (data.record.Date != null)
+                                                return moment(data.record.Date).format('DD/MMM/YYYY')
+                                        },
+                                    },
+                                    Comments: {
+                                        title: 'Comments',
+                                        width: '10%',
+                                        type: 'textarea'
+                                    },
+                                    UserName: {
+                                        title: 'UserName',
+                                        width: '0.5%',
+                                        edit: false,
+                                        create: false,
+                                    },
+
+                                },
+
+                            }, function (data) {
+                                data.childTable.jtable('load');
+                            });
+                        });
+                        return $img;
+                    }
+                },
+                //End of comments Child Table
+            },
+            formCreated: function (event, data) {
+                data.form.find('input[name="Name"]').addClass('validate[required]');
+                data.form.validationEngine();
+            },
+            formSubmitting: function (event, data) {
+                var tasktype = $("#Edit-TaskTypeId").val();
+                var client = $("#Edit-ClientId").val();
+
+                if (client == 0) {
+                    alert("Select Client");
+                    e.preventDefault();
+                    return;
+                }
+                if (tasktype == 0) {
+                    alert("Select File Types");
+                    e.preventDefault();
+                    return;
+                }
+                return data.form.validationEngine('validate');
+            },
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+        });
+        $('#table').jtable('load');
+
+        $('#name').bind('keyup', function (e) {
+            if (e.which == 13) {
+                $('#table').jtable('load', {
+                    name: $('#name').val()
+                });
+            }
+
+        });
+    });
+</script>
